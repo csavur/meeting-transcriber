@@ -36,6 +36,8 @@ enum A11yID {
     static let transcriptionSection = "transcriptionSection"
     static let protocolSection = "protocolSection"
     static let outputFolderSection = "outputFolderSection"
+    static let obsidianSection = "obsidianSection"
+    static let obsidianResetButton = "obsidianResetButton"
     static let vadSection = "vadSection"
     static let echoDedupToggle = "echoDedupToggle"
     static let diarizationSection = "diarizationSection"
