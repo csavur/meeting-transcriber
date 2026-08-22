@@ -251,6 +251,37 @@ final class AppSettingsTests: XCTestCase {
         XCTAssertNil(defaults.data(forKey: "customOutputDirBookmark"))
     }
 
+    // MARK: - Obsidian Vault Directory
+
+    /// No fallback location, unlike the output dir: an export nobody asked for
+    /// would scatter meeting notes into a folder that isn't a vault.
+    func testObsidianDirIsNilUntilAFolderIsChosen() {
+        XCTAssertNil(settings.obsidianDir)
+        XCTAssertFalse(settings.obsidianExportEnabled)
+    }
+
+    func testObsidianDirResolvesAndPersistsAcrossInstances() throws {
+        let dir = try makeTempDirectory(prefix: "AppSettingsObsidianDir")
+        settings.setObsidianDir(dir)
+
+        let bookmark = try XCTUnwrap(settings.obsidianDirBookmark)
+        XCTAssertEqual(defaults.data(forKey: "obsidianDirBookmark"), bookmark)
+        XCTAssertEqual(
+            settings.obsidianDir?.resolvingSymlinksInPath().path,
+            dir.resolvingSymlinksInPath().path,
+        )
+
+        let reloaded = AppSettings(defaults: defaults, apiKeyAccount: apiKeyAccount)
+        XCTAssertEqual(
+            reloaded.obsidianDir?.resolvingSymlinksInPath().path,
+            dir.resolvingSymlinksInPath().path,
+        )
+
+        reloaded.clearObsidianDir()
+        XCTAssertNil(defaults.data(forKey: "obsidianDirBookmark"))
+        XCTAssertNil(reloaded.obsidianDir)
+    }
+
     // MARK: - watchApps
 
     func testWatchAppsAllEnabled() {

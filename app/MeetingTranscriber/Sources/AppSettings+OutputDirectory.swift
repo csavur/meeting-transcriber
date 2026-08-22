@@ -106,7 +106,13 @@ extension AppSettings {
     // MARK: - Helpers
 
     private func resolveCustomOutputDir(isStale: inout Bool) -> URL? {
-        guard let data = customOutputDirBookmark else { return nil }
+        resolveBookmark(customOutputDirBookmark, isStale: &isStale)
+    }
+
+    /// Shared by every user-picked folder setting (output dir, Obsidian vault)
+    /// so they resolve and re-create bookmarks by exactly the same rules.
+    func resolveBookmark(_ data: Data?, isStale: inout Bool) -> URL? {
+        guard let data else { return nil }
         return try? URL(
             resolvingBookmarkData: data,
             options: .withSecurityScope,
@@ -122,7 +128,8 @@ extension AppSettings {
         URL.resourceValues(forKeys: [.pathKey], fromBookmarkData: bookmark)?.path
     }
 
-    private func makeBookmark(for url: URL) throws -> Data {
+    /// Shared by every user-picked folder setting, like `resolveBookmark`.
+    func makeBookmark(for url: URL) throws -> Data {
         try url.bookmarkData(
             options: .withSecurityScope,
             includingResourceValuesForKeys: nil,
