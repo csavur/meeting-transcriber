@@ -101,6 +101,9 @@ struct OutputSettingsView: View {
             }
             .accessibilityIdentifier(A11yID.protocolSection)
             .recordOnlyDisabled(settings.recordOnly)
+
+            obsidianSection
+                .recordOnlyDisabled(settings.recordOnly)
         }
         .formStyle(.grouped)
         .onAppear {
@@ -334,6 +337,62 @@ struct OutputSettingsView: View {
         } else {
             try? FileManager.default.copyItem(at: source, to: dest)
         }
+    }
+
+    /// Optional second destination for the generated protocol: one note per
+    /// meeting, named `2026-08-21 1430 Weekly Sync.md`, inside a folder of the
+    /// user's Obsidian vault. Sits under Protocol Generation because it copies
+    /// what the LLM produced - with no provider there is nothing to export, and
+    /// record-only skips the pipeline entirely.
+    private var obsidianSection: some View {
+        Section("Obsidian") {
+            HStack {
+                Text("Vault Folder")
+                Spacer()
+                Text(obsidianDirDisplay)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
+                    .truncationMode(.middle)
+            }
+
+            HStack {
+                Button("Choose\u{2026}") {
+                    chooseObsidianFolder()
+                }
+
+                Button("Reset") {
+                    settings.clearObsidianDir()
+                }
+                .accessibilityIdentifier(A11yID.obsidianResetButton)
+                .disabled(!settings.obsidianExportEnabled)
+
+                Spacer()
+            }
+
+            Text("Each finished meeting is also saved here as a Markdown note with date, title, app and participants as properties. The protocols folder is unaffected.")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+        }
+        .accessibilityIdentifier(A11yID.obsidianSection)
+    }
+
+    private var obsidianDirDisplay: String {
+        guard let dir = settings.obsidianDir else { return "Not set" }
+        return OutputSettingsLogic.displayPath(
+            for: dir,
+            home: FileManager.default.homeDirectoryForCurrentUser,
+        )
+    }
+
+    private func chooseObsidianFolder() {
+        let panel = NSOpenPanel()
+        panel.canChooseDirectories = true
+        panel.canChooseFiles = false
+        panel.canCreateDirectories = true
+        panel.allowsMultipleSelection = false
+        panel.message = "Choose a folder inside your Obsidian vault"
+        guard panel.runModal() == .OK, let url = panel.url else { return }
+        settings.setObsidianDir(url)
     }
 
     private var outputDirDisplay: String {

@@ -560,4 +560,43 @@ final class SettingsViewTests: XCTestCase { // swiftlint:disable:this type_body_
         let section = try body.find(viewWithAccessibilityIdentifier: A11yID.vadSection)
         XCTAssertTrue(section.isDisabled())
     }
+
+    // MARK: - Obsidian
+
+    func testObsidianSectionExists() throws {
+        let body = try makeOutput().inspect()
+        XCTAssertNoThrow(try body.find(text: "Vault Folder"))
+    }
+
+    func testObsidianResetDisabledWhenNoVaultChosen() throws {
+        let settings = makeSettings()
+        settings.clearObsidianDir()
+        let body = try makeOutput(settings: settings).inspect()
+        let button = try body
+            .find(viewWithAccessibilityIdentifier: A11yID.obsidianResetButton)
+            .button()
+        XCTAssertTrue(button.isDisabled())
+    }
+
+    func testObsidianResetClearsTheVault() throws {
+        let settings = makeSettings()
+        settings.setObsidianDir(try makeTempDirectory(prefix: "SettingsViewObsidianDir"))
+        XCTAssertNotNil(settings.obsidianDirBookmark)
+
+        try makeOutput(settings: settings).inspect()
+            .find(viewWithAccessibilityIdentifier: A11yID.obsidianResetButton)
+            .button()
+            .tap()
+
+        XCTAssertNil(settings.obsidianDirBookmark)
+    }
+
+    /// Record-only skips the whole pipeline, so there is no protocol to export.
+    func testRecordOnlyDisablesObsidianSection() throws {
+        let settings = makeSettings()
+        settings.recordOnly = true
+        let body = try makeOutput(settings: settings).inspect()
+        let section = try body.find(viewWithAccessibilityIdentifier: A11yID.obsidianSection)
+        XCTAssertTrue(section.isDisabled())
+    }
 }

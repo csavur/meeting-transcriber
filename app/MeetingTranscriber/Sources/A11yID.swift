@@ -49,6 +49,8 @@ enum A11yID {
     static let includeFullTranscriptToggle = "includeFullTranscriptToggle"
     static let saveRawTranscriptToggle = "saveRawTranscriptToggle"
     static let outputFolderSection = "outputFolderSection"
+    static let obsidianSection = "obsidianSection"
+    static let obsidianResetButton = "obsidianResetButton"
     static let vadSection = "vadSection"
     static let echoCancellationToggle = "echoCancellationToggle"
     static let echoDedupToggle = "echoDedupToggle"
