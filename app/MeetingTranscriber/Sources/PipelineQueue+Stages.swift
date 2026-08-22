@@ -971,6 +971,10 @@ extension PipelineQueue {
             if let idx = jobs.firstIndex(where: { $0.id == jobID }) {
                 jobs[idx].protocolPath = mdPath
             }
+            // Second copy into the vault, if one is configured. After the
+            // protocol is on disk, so a vault problem can never cost the user
+            // the protocol itself.
+            exportToObsidian(jobID: jobID, markdown: markdown, title: title)
         } catch {
             // Private, unlike the generation failure above: a file-write
             // CocoaError names the file, and the file name is the meeting title.

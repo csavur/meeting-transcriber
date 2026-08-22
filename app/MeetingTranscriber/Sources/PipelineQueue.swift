@@ -82,6 +82,10 @@ class PipelineQueue {
     /// its scope until it is deallocated, which a running job delays, since
     /// the processing task holds the queue until the job returns.
     private let scopedOutputDir: URL?
+
+    /// Optional Obsidian vault folder receiving a second, human-named copy of
+    /// each generated protocol. Nil disables the export entirely.
+    let obsidianDir: URL?
     /// Where `DualSourceRecorder` writes, i.e. the audio this app produced and
     /// may therefore relocate. Injectable so a test can exercise the hand-off
     /// without writing into the real user directory; see `AudioPersistencePolicy`.
@@ -303,6 +307,7 @@ class PipelineQueue {
         securityScope = .live
         scopedOutputDir = nil
         self.stagingDir = stagingDir
+        self.obsidianDir = nil
         self.diarizeEnabled = false
         echoDedupEnabled = true
         isEchoCancellationEnabled = echoCancellationEnabled
@@ -385,6 +390,7 @@ class PipelineQueue {
         diarizationFactoryWithMode: ((DiarizerMode) -> any DiarizationProvider)? = nil,
         protocolGeneratorFactory: @escaping () -> (any ProtocolGenerating)?,
         outputDir: URL,
+        obsidianDir: URL? = nil,
         logDir: URL? = nil,
         stagingDir: URL = AppPaths.recordingsDir,
         diarizeEnabled: Bool = false,
@@ -417,6 +423,7 @@ class PipelineQueue {
         self.outputDir = outputDir
         self.securityScope = securityScope
         scopedOutputDir = securityScope.start(outputDir) ? outputDir : nil
+        self.obsidianDir = obsidianDir
         self.stagingDir = stagingDir
         self.diarizeEnabled = diarizeEnabled
         self.echoDedupEnabled = echoDedupEnabled

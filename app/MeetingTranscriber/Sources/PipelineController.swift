@@ -281,6 +281,7 @@ final class PipelineController {
             // this queue will run is decided, so a fallback is reported here and
             // not from `effectiveOutputDir`, which `body` reads on every render.
             outputDir: queueEnvironment.resolveOutputDir(outputDirectory),
+            obsidianDir: settings.obsidianDir,
             logDir: queueEnvironment.logDir,
             stagingDir: queueEnvironment.stagingDir,
             diarizeEnabled: settings.diarize,
