@@ -734,6 +734,10 @@ extension PipelineQueue {
             if let idx = jobs.firstIndex(where: { $0.id == jobID }) {
                 jobs[idx].protocolPath = mdPath
             }
+            // Second copy into the vault, if one is configured. After the
+            // protocol is on disk, so a vault problem can never cost the user
+            // the protocol itself.
+            exportToObsidian(jobID: jobID, markdown: fullMD, title: title)
             stopElapsedTimer()
         } catch {
             logger.warning("[\(shortID, privacy: .public)] protocol_generation_failed error=\(error.localizedDescription, privacy: .public)")

@@ -72,6 +72,12 @@ struct PipelineJob: Identifiable, Codable {
     var echo: EchoDetectionDTO?
     var transcriptPath: URL?
     var protocolPath: URL?
+    /// Where this job's protocol was copied inside the Obsidian vault, once it
+    /// has been exported. Stored rather than re-derived, so a protocol
+    /// regenerated after speaker naming overwrites the same note instead of
+    /// forking a second one under a freshly-stamped name. Optional, so
+    /// snapshots written before the vault export existed still decode.
+    var obsidianPath: URL?
     var namingSlug: String?
     /// Diarizer mode that produced the *current* `speakerNamingDataByJob`
     /// entry. Set by `PipelineQueue` after diarisation completes (in the
@@ -121,6 +127,7 @@ struct PipelineJob: Identifiable, Codable {
         self.echo = nil
         self.transcriptPath = nil
         self.protocolPath = nil
+        self.obsidianPath = nil
         self.namingSlug = nil
         self.usedDiarizerMode = nil
         self.autoSkipNaming = autoSkipNaming
