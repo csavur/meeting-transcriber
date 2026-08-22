@@ -50,6 +50,10 @@ class PipelineQueue {
     let diarizationFactoryWithMode: ((DiarizerMode) -> any DiarizationProvider)?
     let protocolGeneratorFactory: (() -> (any ProtocolGenerating)?)?
     let outputDir: URL?
+
+    /// Optional Obsidian vault folder receiving a second, human-named copy of
+    /// each generated protocol. Nil disables the export entirely.
+    let obsidianDir: URL?
     /// Where `DualSourceRecorder` writes, i.e. the audio this app produced and
     /// may therefore relocate. Injectable so a test can exercise the hand-off
     /// without writing into the real user directory; see `AudioPersistencePolicy`.
@@ -225,6 +229,7 @@ class PipelineQueue {
         self.diarizationFactoryWithMode = nil
         self.protocolGeneratorFactory = nil
         self.outputDir = nil
+        self.obsidianDir = nil
         stagingDir = AppPaths.recordingsDir
         self.diarizeEnabled = false
         echoDedupEnabled = true
@@ -299,6 +304,7 @@ class PipelineQueue {
         diarizationFactoryWithMode: ((DiarizerMode) -> any DiarizationProvider)? = nil,
         protocolGeneratorFactory: @escaping () -> (any ProtocolGenerating)?,
         outputDir: URL,
+        obsidianDir: URL? = nil,
         logDir: URL? = nil,
         stagingDir: URL = AppPaths.recordingsDir,
         diarizeEnabled: Bool = false,
@@ -322,6 +328,7 @@ class PipelineQueue {
         self.diarizationFactoryWithMode = diarizationFactoryWithMode
         self.protocolGeneratorFactory = protocolGeneratorFactory
         self.outputDir = outputDir
+        self.obsidianDir = obsidianDir
         self.stagingDir = stagingDir
         self.diarizeEnabled = diarizeEnabled
         self.echoDedupEnabled = echoDedupEnabled
