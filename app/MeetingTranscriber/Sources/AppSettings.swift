@@ -430,6 +430,14 @@ final class AppSettings {
         didSet { defaults.set(customOutputDirBookmark, forKey: "customOutputDirBookmark") }
     }
 
+    /// Security-scoped bookmark for the optional Obsidian vault folder that
+    /// receives a second copy of every generated protocol. Nil (the default)
+    /// means no vault export. Everything derived from it lives in
+    /// `AppSettings+ObsidianDirectory.swift`.
+    var obsidianDirBookmark: Data? {
+        didSet { defaults.set(obsidianDirBookmark, forKey: "obsidianDirBookmark") }
+    }
+
     // MARK: - Diagnostics
 
     /// Enables verbose diagnostic logging across **all** pipelines: audio
@@ -521,6 +529,7 @@ final class AppSettings {
             ?? Self.defaultOpenAIEndpoint
         openAIModel = defaults.object(forKey: "openAIModel") as? String ?? "llama3.1"
         customOutputDirBookmark = defaults.data(forKey: "customOutputDirBookmark")
+        obsidianDirBookmark = defaults.data(forKey: "obsidianDirBookmark")
 
         // Migrate legacy "audioDebugLogging" key (renamed to "verboseDiagnostics" 2026-05-04).
         // New key wins if both are set; legacy value seeds the new key on first launch.
